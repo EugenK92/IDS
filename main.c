@@ -1,12 +1,13 @@
 //include external libraries
-#include "ext_lib/stdio.h"
-#include "ext_lib/stdbool.h"
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 //include internal libraries
-#include "lib/checksum.h"
+#include "lib/checkfile.h"
 
-int main(int argc, char* args[]) {
-
-    printf("Hello\n");
-    return 0;
+int main (int argc, char** argv)
+{
+    scan_dir();
 }
+
