@@ -1,8 +1,8 @@
 CC = gcc
 NAME = IDS
 CFLAGS = -Wall -Werror -pedantic
-LDFLAGS = -lssl -lcrypto
-FILES = main.c checkfile.c
+LDFLAGS = -lssl -lcrypto -l sqlite3
+FILES = main.c checkfile.c database.c
 
 IDS: $(FILES)
 	$(CC) $(FILES) -o $(NAME) $(CFLAGS) $(LDFLAGS)
