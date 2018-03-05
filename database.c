@@ -42,3 +42,7 @@ void create_table() {
 
    sqlite3_close(db);
 }
+
+void insert_data(char* path) {
+    //prepared statements
+}
