@@ -44,5 +44,7 @@ void create_table() {
 }
 
 void insert_data(char* path) {
-    //prepared statements
+    sqlite3 *db = connect();
+
+    char *query = "";
 }
