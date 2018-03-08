@@ -10,7 +10,8 @@
 
 int main (int argc, char** argv)
 {
-    //scan_dir();
-    create_table();
+    scan_dir();
+   // create_table();
+   // insert_data("~/Uni/IDS/main.c", "ABC123");
 }
 

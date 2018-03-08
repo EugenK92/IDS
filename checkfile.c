@@ -13,15 +13,16 @@ void scan_dir() {
     char output[65];
 
     n = scandir(".", &namelist, NULL, alphasort);
-    if (n < 0)
-    perror("scandir");
-    else {
-    while (n--) {
-        printf("%s ", namelist[n]->d_name);
-        printf("%s\n", calc_sha256(namelist[n]->d_name, output));
-        free(namelist[n]);
+    if (n < 0) {
+        perror("scandir");
     }
-    free(namelist);
+    else {
+        while (n--) {
+            printf("%s ", namelist[n]->d_name);
+            printf("%s\n", calc_sha256(namelist[n]->d_name, output));
+            free(namelist[n]);
+        }
+        free(namelist);
     }     
 }
 
