@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sqlite3.h>
 #include <time.h> 
 
@@ -49,23 +50,35 @@ void create_table() {
    sqlite3_close(db);
 }
 
-void select_all_data() {
+char* select_all_data() {
     sqlite3 *db = connect();
     sqlite3_stmt *stmt;
     char *query = "SELECT * FROM filelist;";
     
     sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
-
+    int length = 0;
+    char* result = (char *) malloc(sizeof(char) * 65535);
+    /* remove garbage */
+    strcpy(result,"");
+    char* temp = (char *) malloc(sizeof(char) * 512);
+    char len[20];
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        printf("%d %s %s %s %s\n", sqlite3_column_int(stmt, 0), 
-                                   sqlite3_column_text(stmt, 1), 
-                                   sqlite3_column_text(stmt, 2),
-                                   sqlite3_column_text(stmt, 3),
-                                   sqlite3_column_text(stmt, 4)
+        snprintf(temp, 256, "id=%d;path=%s;checksum=%s;created_at:%s;updated_at:%s;\n", 
+                                sqlite3_column_int(stmt, 0), 
+                                sqlite3_column_text(stmt, 1), 
+                                sqlite3_column_text(stmt, 2),
+                                sqlite3_column_text(stmt, 3),
+                                sqlite3_column_text(stmt, 4)
         );
+        length++;
+        strcat(result, temp);
     }
+    sprintf(len, "length=%d", length);
+    strcat(result, len);
 
-    sqlite3_finalize(stmt); 
+    // printf("%s\n", result);
+    sqlite3_finalize(stmt);
+    return result; 
 }
 
 /**

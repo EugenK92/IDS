@@ -13,11 +13,10 @@
 int main (int argc, char** argv)
 {
     // scan_dir();
-    // create_table();
-    select_all_data();
-    put_data("blub/blub/wdwd", "ABC1234", 0);
-    printf("\n");
-    select_all_data();
+    //create_table();
+   // put_data("README.md", "5fde7f704806740b791a386ca361a20cf8108398b93e375336e688037e9b8050", 0);
+    // printf("\n");
+    printf("%s\n", select_all_data());
     
 }
 

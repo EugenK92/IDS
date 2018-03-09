@@ -8,7 +8,7 @@ int callback(void *, int, char**, char**);
 void create_table();
 int count_data(void *, int, char**, char**);
 int check_data_by_path(char*);
-void select_all_data();
+char* select_all_data();
 int update_data(int, char*, char*);
 char* get_current_timestamp();
 int insert_data(char*, char*);
