@@ -14,13 +14,10 @@ int main (int argc, char** argv)
 {
     // scan_dir();
     // create_table();
-    //printf("%d\n", check_data_by_path("~/Uni/IDS/main.c"));
-    // select_data();
-    // insert_data("test/123/test", "BCA111");
-  //  select_all_data();
-    put_data("blub/blub/ddd", "ABC1234", 0);
+    select_all_data();
+    put_data("blub/blub/wdwd", "ABC1234", 0);
     printf("\n");
-   select_all_data();
+    select_all_data();
     
 }
 

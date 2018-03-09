@@ -69,7 +69,7 @@ void select_all_data() {
 }
 
 /**
- * returns 100 if data is available
+ * returns 0 if data is available
 */
 int check_data_by_path(char* path) {
     sqlite3 *db = connect();
@@ -80,6 +80,12 @@ int check_data_by_path(char* path) {
     sqlite3_bind_text(stmt, 1, path, -1, SQLITE_STATIC);
 
     rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+        rc = sqlite3_column_int(stmt, 0);
+    }
+    else {
+        rc = 0;
+    }
     sqlite3_finalize(stmt); 
     return rc;   
 }
@@ -131,12 +137,12 @@ int insert_data(char* path, char* checksum) {
 
 int put_data(char* path, char* checksum, int id) {
     int result = 0;
-    
-    if (check_data_by_path(path) == 101) {
+    int data = check_data_by_path(path);
+    if (data == 0) {
         result = insert_data(path, checksum);
     }
     else {
-        result = update_data(id, path, checksum);
+        result = update_data(data, path, checksum);
     }
 
     return result;
