@@ -6,6 +6,7 @@
 #include <openssl/sha.h>
 
 #include "lib/checkfile.h"
+#include "lib/database.h"
 
 void scan_dir() {
     struct dirent **namelist;
@@ -18,8 +19,7 @@ void scan_dir() {
     }
     else {
         while (n--) {
-            printf("%s ", namelist[n]->d_name);
-            printf("%s\n", calc_sha256(namelist[n]->d_name, output));
+            put_data(namelist[n]->d_name, calc_sha256(namelist[n]->d_name, output), 0);
             free(namelist[n]);
         }
         free(namelist);
