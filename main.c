@@ -8,10 +8,19 @@
 #include "lib/checkfile.h"
 #include "lib/database.h"
 
+/* sudo apt-get install libsqlite3-dev */
+
 int main (int argc, char** argv)
 {
-    scan_dir();
-   // create_table();
-   // insert_data("~/Uni/IDS/main.c", "ABC123");
+    // scan_dir();
+    // create_table();
+    //printf("%d\n", check_data_by_path("~/Uni/IDS/main.c"));
+    // select_data();
+    // insert_data("test/123/test", "BCA111");
+  //  select_all_data();
+    put_data("blub/blub/ddd", "ABC1234", 0);
+    printf("\n");
+   select_all_data();
+    
 }
 
