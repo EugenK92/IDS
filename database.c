@@ -63,7 +63,7 @@ char* select_all_data() {
     char* temp = (char *) malloc(sizeof(char) * 512);
     char len[20];
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        snprintf(temp, 256, "id=%d;path=%s;checksum=%s;created_at:%s;updated_at:%s;\n", 
+        snprintf(temp, 256, "id=%d;path=%s;checksum=%s;created_at=%s;updated_at=%s;\n", 
                                 sqlite3_column_int(stmt, 0), 
                                 sqlite3_column_text(stmt, 1), 
                                 sqlite3_column_text(stmt, 2),
