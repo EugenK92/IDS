@@ -11,30 +11,53 @@
 #include "lib/checkfile.h"
 #include "lib/database.h"
 
-void scan_dir() {
+void scan_dir(char* path, int depth) {
     struct dirent **namelist;
     int n = 0;
-    char output[65];
-
-    n = scandir(".", &namelist, NULL, alphasort);
+    char cwd[1024];
+    //char output[65];
+    printf("Depth: %d Path: %s\n\n", depth, path);
+    n = scandir(path, &namelist, NULL, alphasort);
     if (n < 0) {
         perror("scandir");
     }
     else {
         while (n--) {
-            put_data(namelist[n]->d_name, calc_sha256(namelist[n]->d_name, output), 0);
-            printf("%s => %d\n", namelist[n]->d_name, check_file(namelist[n]->d_name));
+            //put_data(namelist[n]->d_name, calc_sha256(namelist[n]->d_name, output), 0);
+            printf("%s => %d\n", namelist[n]->d_name, check_directory(namelist[n]->d_name));
+            char* temp_path = (char *) malloc(sizeof(char) * 128);
+            strcpy(temp_path,"");
+            strcat(temp_path, getcwd(cwd, sizeof(cwd)));
+            strcat(temp_path, "/");
+            strcat(temp_path, namelist[n]->d_name);
+            printf("%s\n", temp_path);
+            if (strcmp(namelist[n]->d_name, ".") != 0 && 
+                strcmp(namelist[n]->d_name, "..") != 0 && 
+                check_directory(temp_path) == 1) {
+               
+                opendir(temp_path);
+                scan_dir(temp_path, depth + 1);
+            }
+
             free(namelist[n]);
         }
         free(namelist);
+        for (int i = 0; i < depth; i++) {
+            //opendir("..");
+        }
     }     
 }
 
 // Source: https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file
-int check_file(const char *path) {
+int check_directory(const char *path) {
+    printf("Checking: %s\n", path);
     struct stat path_stat;
-    stat(path, &path_stat);
-    return S_ISREG(path_stat.st_mode);
+    if (stat(path, &path_stat) == -1) {
+      perror("while calling stat()");
+      return -1;
+   } else {
+      return S_ISDIR(path_stat.st_mode);
+   }
 }
 
 // Source: https://stackoverflow.com/questions/7853156/calculate-and-print-sha256-hash-of-a-file-using-openssl

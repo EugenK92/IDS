@@ -14,7 +14,7 @@ int main (int argc, char** argv)
 {
     
     // create_table();
-    scan_dir();
+    scan_dir("test1", 0);
     // printf("\n");
     // printf("%s\n", select_all_data());
     
