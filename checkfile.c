@@ -4,6 +4,9 @@
 #include <string.h>
 #include <dirent.h>
 #include <openssl/sha.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "lib/checkfile.h"
 #include "lib/database.h"
@@ -20,10 +23,18 @@ void scan_dir() {
     else {
         while (n--) {
             put_data(namelist[n]->d_name, calc_sha256(namelist[n]->d_name, output), 0);
+            printf("%s => %d\n", namelist[n]->d_name, check_file(namelist[n]->d_name));
             free(namelist[n]);
         }
         free(namelist);
     }     
+}
+
+// Source: https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file
+int check_file(const char *path) {
+    struct stat path_stat;
+    stat(path, &path_stat);
+    return S_ISREG(path_stat.st_mode);
 }
 
 // Source: https://stackoverflow.com/questions/7853156/calculate-and-print-sha256-hash-of-a-file-using-openssl

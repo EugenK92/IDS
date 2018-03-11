@@ -12,10 +12,11 @@
 
 int main (int argc, char** argv)
 {
-    create_table();
+    
+    // create_table();
     scan_dir();
-    printf("\n");
-    printf("%s\n", select_all_data());
+    // printf("\n");
+    // printf("%s\n", select_all_data());
     
 }
 

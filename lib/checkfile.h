@@ -4,8 +4,9 @@
 #include <stdbool.h>
 #include <openssl/sha.h>
 
-void scan_dir();
+int check_file(const char *);
 char* calc_sha256 (char* path, char output[65]);
 bool check_checksum(char s[], const unsigned char *c);
+void scan_dir();
 
 #endif /* CHECKFILE_H */
