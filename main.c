@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <sqlite3.h>
+#include <dirent.h>
+#include <unistd.h>
 
 //include internal libraries
 #include "lib/checkfile.h"
@@ -14,7 +16,8 @@ int main (int argc, char** argv)
 {
     
     // create_table();
-    scan_dir("test1", 0);
+   // chdir("/etc");
+    scan_dir("", 0);
     // printf("\n");
     // printf("%s\n", select_all_data());
     
