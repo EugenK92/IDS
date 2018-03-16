@@ -17,7 +17,7 @@ int main (int argc, char** argv)
     
     // create_table();
    // chdir("/etc");
-    scan_dir("", 0);
+    scan_dir(argv[1]);
     // printf("\n");
     // printf("%s\n", select_all_data());
     
