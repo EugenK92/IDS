@@ -12,7 +12,7 @@
 #include "lib/checkfile.h"
 #include "lib/database.h"
 
-// Source: https://www.lemoda.net/c/recursive-directory/
+// Helping Source: https://www.lemoda.net/c/recursive-directory/
 void scan_dir(char* dir_name) {
     DIR* directory;
     directory = opendir (dir_name);
