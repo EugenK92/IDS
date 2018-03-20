@@ -87,25 +87,26 @@ int check_directory(const char* path) {
 // Source: https://stackoverflow.com/questions/7853156/calculate-and-print-sha256-hash-of-a-file-using-openssl
 char* calc_sha256 (char* path) {
     FILE* file = fopen(path, "rb");
-
     char* output = (char*) malloc(sizeof(char) * 65);
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    const int bufSize = 65535;
-    char* buffer = (char*) malloc(sizeof(char) * bufSize);
-    int bytesRead = 0;
-    while((bytesRead = fread(buffer, 1, bufSize, file))) {
-        SHA256_Update(&sha256, buffer, bytesRead);
+    if (file) {
+        unsigned char hash[SHA256_DIGEST_LENGTH];
+        SHA256_CTX sha256;
+        SHA256_Init(&sha256);
+        const int bufSize = 65535;
+        char* buffer = (char*) malloc(sizeof(char) * bufSize);
+        int bytesRead = 0;
+        while((bytesRead = fread(buffer, 1, bufSize, file))) {
+            SHA256_Update(&sha256, buffer, bytesRead);
+        }
+
+        SHA256_Final(hash, &sha256);
+
+        for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+            sprintf(output + (i * 2), "%02x", hash[i]);
+        }
+
+        fclose(file);
+        free(buffer);
     }
-
-    SHA256_Final(hash, &sha256);
-
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-        sprintf(output + (i * 2), "%02x", hash[i]);
-    }
-
-    fclose(file);
-    free(buffer);
     return output;
 }      

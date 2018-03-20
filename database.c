@@ -76,6 +76,7 @@ char* select_all_data() {
 
     // printf("%s\n", result);
     sqlite3_finalize(stmt);
+    sqlite3_close(db);
     return result; 
 }
 
@@ -96,6 +97,7 @@ char* select_checksum_by_path(char* path) {
         strcat(result, temp);
     }
     sqlite3_finalize(stmt);
+    sqlite3_close(db);
     return result; 
 }
 
@@ -118,6 +120,7 @@ int check_data_by_path(char* path) {
         rc = 0;
     }
     sqlite3_finalize(stmt); 
+    sqlite3_close(db);
     return rc;   
 }
 
@@ -145,7 +148,8 @@ int update_data(int id, char * path, char* checksum) {
     sqlite3_bind_int(stmt, 4, id);
     
     rc = sqlite3_step(stmt);
-    sqlite3_finalize(stmt); 
+    sqlite3_finalize(stmt);
+    sqlite3_close(db); 
     return rc;
 }
 
@@ -163,6 +167,7 @@ int insert_data(char* path, char* checksum) {
     
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt); 
+    sqlite3_close(db);
     return rc;
 }
 
