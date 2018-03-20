@@ -41,7 +41,9 @@ void scan_dir(char* dir_name) {
                     int path_length;
                     char path[PATH_MAX];
     
-                    path_length = snprintf (path, PATH_MAX, "%s/%s", dir_name, d_name);
+                    path_length = strcmp(d_name, "") == 0 ? 
+                        snprintf (path, PATH_MAX, "%s", dir_name) :
+                        snprintf (path, PATH_MAX, "%s/%s", dir_name, d_name);
                     if (path_length >= PATH_MAX) {
                         fprintf (stderr, "Path length has got too long.\n");
                         exit (EXIT_FAILURE);
@@ -49,12 +51,14 @@ void scan_dir(char* dir_name) {
                     scan_dir (path);
                 }
                 else {
+                    char output[65];
                     char* path = (char*) malloc(sizeof(char) * PATH_MAX);
                     strcpy(path,"");
                     strcat(path, dir_name);
                     strcat(path, "/");
                     strcat(path, d_name);
-                    printf("%s => %s\n", path, calc_sha256(path));
+                    calc_sha256(path, output);
+                    printf("%s => %s\n", path, output);
                 }
             }
         }
@@ -80,20 +84,19 @@ int check_directory(const char* path) {
 }
 
 // Source: https://stackoverflow.com/questions/7853156/calculate-and-print-sha256-hash-of-a-file-using-openssl
-char* calc_sha256 (char* path) {
-    char* output = (char *) malloc(sizeof(char) * 65);
+void calc_sha256 (char* path, char output[65]) {
     FILE* file = fopen(path, "rb");
 
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
     const int bufSize = 65535;
-    char* buffer = malloc(bufSize);
+    char* buffer = (char*) malloc(sizeof(char) * bufSize);
     int bytesRead = 0;
-    fread(buffer, 1, bufSize, file);
-    while((bytesRead = fread(buffer, bufSize, 1, file))) {
+    while((bytesRead = fread(buffer, 1, bufSize, file))) {
         SHA256_Update(&sha256, buffer, bytesRead);
     }
+
     SHA256_Final(hash, &sha256);
 
     for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
@@ -102,5 +105,4 @@ char* calc_sha256 (char* path) {
 
     fclose(file);
     free(buffer);
-    return output;
 }      
