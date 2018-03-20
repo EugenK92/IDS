@@ -1,3 +1,4 @@
 .vscode/
 IDS
 sqlite/ids.db
+sqlite/ids.db-journal
