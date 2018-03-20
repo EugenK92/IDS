@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <sqlite3.h>
 #include <time.h> 
@@ -39,12 +40,9 @@ void create_table() {
 
     char *errmsg = NULL;
     int rc = sqlite3_exec(db, query, callback, 0, &errmsg);
-    if (rc == SQLITE_OK) {
-        printf("Table created.\n");
-    }
-    else {
+    if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", errmsg);
-        sqlite3_free(errmsg);     
+        sqlite3_free(errmsg); 
     }
 
    sqlite3_close(db);
@@ -77,6 +75,26 @@ char* select_all_data() {
     strcat(result, len);
 
     // printf("%s\n", result);
+    sqlite3_finalize(stmt);
+    return result; 
+}
+
+char* select_checksum_by_path(char* path) {
+    sqlite3 *db = connect();
+    sqlite3_stmt *stmt;
+    char *query = "SELECT checksum FROM filelist WHERE path = ?;";
+    
+    sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
+    sqlite3_bind_text(stmt, 1, path, -1, SQLITE_STATIC);
+
+    char* result = (char *) malloc(sizeof(char) * 65535);
+    /* remove garbage */
+    strcpy(result,"");
+    char* temp = (char *) malloc(sizeof(char) * 512);
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        snprintf(temp, 80, "%s", sqlite3_column_text(stmt, 0));
+        strcat(result, temp);
+    }
     sqlite3_finalize(stmt);
     return result; 
 }
@@ -148,14 +166,42 @@ int insert_data(char* path, char* checksum) {
     return rc;
 }
 
-int put_data(char* path, char* checksum, int id) {
+// works for checksum only at the moment
+// char* filter_value(char* data, char* param) {
+//     char* new_string =  strstr(data, param);
+//     char* end = strchr(new_string, ';');
+
+//     int len = end - new_string;
+//     char* dest = (char*) malloc(sizeof(char) * len);
+//     memmove(dest, new_string, len);
+//     // printf("%s\n", dest);
+//     // +1 for the '=' char
+//     int param_len = sizeof(param) + 1;
+//     int new_len = len - param_len;
+//     char* value = (char*) malloc(sizeof(char) * new_len);
+//     memmove(value, dest + param_len, new_len);
+//     free(dest);
+//     return value;
+// }
+
+int check_file_change(int id, char * path, char* current_checksum) {
+    char* data = select_checksum_by_path(path);
+    // printf("%s\n%s\n", data, current_checksum);
+    return strcmp(current_checksum, data);
+}
+
+int put_data(char* path, char* checksum) {
     int result = 0;
     int data = check_data_by_path(path);
     if (data == 0) {
         result = insert_data(path, checksum);
+        printf("New file was found: %s\n", path);
     }
     else {
-        result = update_data(data, path, checksum);
+        result = check_file_change(data, path, checksum);
+        if (result != 0) {
+            printf("File: %s was changed\n", path);
+        }
     }
 
     return result;

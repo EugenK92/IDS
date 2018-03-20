@@ -8,10 +8,12 @@ int callback(void *, int, char**, char**);
 void create_table();
 int count_data(void *, int, char**, char**);
 int check_data_by_path(char*);
+char* filter_value(char*, char*);
+char* select_checksum_by_path(char*);
 char* select_all_data();
 int update_data(int, char*, char*);
 char* get_current_timestamp();
 int insert_data(char*, char*);
-int put_data(char*, char*, int);
+int put_data(char*, char*);
 
 #endif /* DATABASE_H */

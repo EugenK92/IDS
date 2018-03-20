@@ -15,7 +15,7 @@
 int main (int argc, char** argv)
 {
     
-    // create_table();
+    create_table();
    // chdir("/etc");
    if (argc < 2) {
        printf("usage: ./IDS <starting path>\n");

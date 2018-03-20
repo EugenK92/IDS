@@ -5,7 +5,7 @@
 #include <openssl/sha.h>
 
 int check_directory(const char *);
-void calc_sha256 (char*, char o[65]);
+char* calc_sha256 (char*);
 bool check_checksum(char s[], const unsigned char*);
 void scan_dir(char*);
 
