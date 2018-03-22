@@ -15,26 +15,28 @@
 
 int check_parameter(int len, char* argv[], char* param);
 void print_manual();
+int check_package(char* package);
 
 int main (int argc, char* argv[]) {
-
-    if (argc < 2) {
-        print_manual();
-    } 
-    else {
-        if (check_parameter(argc, argv, "--init") != 0 || check_parameter(argc, argv, "-i") != 0) {
-            printf("Start init\n");
-        }
-        else if (check_parameter(argc, argv, "--check") != 0 || check_parameter(argc, argv, "-c") != 0) {
-            printf("Start check\n");
-        }
-        else if (check_parameter(argc, argv, "--help") != 0 || check_parameter(argc, argv, "-h") != 0) {
+    if (check_package("dpkg -s libsqlite3-dev") == 1) {
+        if (argc < 2) {
             print_manual();
-        }
+        } 
         else {
-            print_manual();
-        }
-    }   
+            if (check_parameter(argc, argv, "--init") != 0 || check_parameter(argc, argv, "-i") != 0) {
+                printf("Start init\n");
+            }
+            else if (check_parameter(argc, argv, "--check") != 0 || check_parameter(argc, argv, "-c") != 0) {
+                printf("Start check\n");
+            }
+            else if (check_parameter(argc, argv, "--help") != 0 || check_parameter(argc, argv, "-h") != 0) {
+                print_manual();
+            }
+            else {
+                print_manual();
+            }
+        }   
+    }
 //     create_table();
 //    // chdir("/etc");
 //    if (argc < 2) {
@@ -72,7 +74,32 @@ void print_manual() {
     printf("\nLICENSE\tGNU General Public License v3.0\n");
 }
 
+// Source: https://stackoverflow.com/questions/43116/how-can-i-run-an-external-program-from-c-and-parse-its-output
+int check_package(char* package) {
+    char *cmd = package;    
 
+    char buf[128];
+    FILE *fp;
+
+    if ((fp = popen(cmd, "r")) == NULL) {
+        printf("Error opening pipe!\n");
+        return -1;
+    }
+
+    int found = 0;
+    while (fgets(buf, 128, fp) != NULL) {
+        if (strstr(buf, "Status: install ok installed") != NULL) {
+            found = 1;
+        }
+    }
+
+    if(pclose(fp))  {
+        printf("Command not found or exited with error status\n");
+        return -1;
+    }
+
+    return found;
+}
 
 
 
