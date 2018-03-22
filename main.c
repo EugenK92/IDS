@@ -24,10 +24,12 @@ int main (int argc, char* argv[]) {
         } 
         else {
             if (check_parameter(argc, argv, "--init") != 0 || check_parameter(argc, argv, "-i") != 0) {
-                printf("Start init\n");
+                create_table(); 
             }
             else if (check_parameter(argc, argv, "--check") != 0 || check_parameter(argc, argv, "-c") != 0) {
-                printf("Start check\n");
+                int pos = check_parameter(argc, argv, "--check") != 0 ? check_parameter(argc, argv, "--check") : check_parameter(argc, argv, "-c"); 
+                // check here if argv[pos + 1] exists
+                scan_dir(argv[pos + 1]);
             }
             else if (check_parameter(argc, argv, "--help") != 0 || check_parameter(argc, argv, "-h") != 0) {
                 print_manual();
@@ -37,16 +39,6 @@ int main (int argc, char* argv[]) {
             }
         }   
     }
-//     create_table();
-//    // chdir("/etc");
-//    if (argc < 2) {
-//        printf("usage: ./IDS <starting path>\n");
-//    }
-//    else {
-//        scan_dir(argv[1]);
-//    }
-    // printf("\n");
-    // printf("%s\n", select_all_data());
     
 }
 
