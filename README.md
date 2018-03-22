@@ -1,13 +1,13 @@
 # IDS
 HTW ICW 2 - Prozessbasiertes IDS - Anforderungen
-- Sprache: C
+- Sprache: C ==CHECK==
 - Interface zu externer Software (Änderungen und Berichte)
 - Bibliotheken lokal einbinden (Sicherheit)
 - Tripwire nachimplementieren
-- neue kryptog. Algor.
+- neue kryptog. Algor. ==CHECK==
 - Zeitsteuerung
-- --- Alleinstellungsmerkmal: Installation von Programmen --> geänderte Dateien ==> die nicht zum Programm gehören, erkennen "estrace"
-- Dateien von estrace einlesen
+- --- Alleinstellungsmerkmal: Installation von Programmen --> geänderte Dateien ==> die nicht zum Programm gehören, erkennen "strace"
+- Dateien von strace einlesen
 - Aufgabenblatt von WI IT Sicherheit
 - RPM generieren <== NICHT benutzen
 - zweites Programm verwenden
@@ -17,7 +17,7 @@ HTW ICW 2 - Prozessbasiertes IDS - Anforderungen
 - "libsoldium" verwenden
 - Tripwire kompatibles Einlesen von Dateien "Kryptalgorithmen"
 - Mit Threads intern arbeiten (mit Bibliotheken, kompatibel sein)
-- Installationsmanual
+- Installationsmanual ==CHECK==
 - Dokumentation von Vorgehensweise - nicht Code dokumentieren
 - Ostern - 1. oder 2. Arbeit 
 - möglichst Portabel
