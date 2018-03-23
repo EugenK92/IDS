@@ -17,14 +17,14 @@ void scan_dir(char* dir_name) {
     DIR* directory;
     directory = opendir (dir_name);
 
-    if (!directory) {
-        fprintf (stderr, "Cannot open directory '%s': %s\n",
-                 dir_name, strerror (errno));
-        exit (EXIT_FAILURE);
-    }
+    // if (!directory) {
+    //     fprintf (stderr, "Cannot open directory '%s': %s\n",
+    //              dir_name, strerror (errno));
+    //     //exit (EXIT_FAILURE);
+    // }
 
     int end = false;
-    while (!end) {
+    while (!end && directory) {
         struct dirent * entry;
         const char * d_name;
 
@@ -48,7 +48,7 @@ void scan_dir(char* dir_name) {
                         fprintf (stderr, "Path length has got too long.\n");
                         exit (EXIT_FAILURE);
                     }
-                    scan_dir (path);
+                    scan_dir(path);
                 }
                 else {
                     char* output = (char*) malloc(sizeof(char) * 65);
@@ -65,7 +65,7 @@ void scan_dir(char* dir_name) {
         }
     }
 
-    if (closedir (directory)) {
+    if (directory && closedir (directory)) {
         fprintf (stderr, "Could not close '%s': %s\n",
                  dir_name, strerror (errno));
         exit (EXIT_FAILURE);
