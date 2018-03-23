@@ -58,7 +58,6 @@ void scan_dir(char* dir_name) {
                     strcat(path, "/");
                     strcat(path, d_name);
                     output = calc_sha256(path);
-                    // printf("%s => %s\n", path, output);
                     put_data(path, output);
                 }
             }
