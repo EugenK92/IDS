@@ -15,7 +15,7 @@
 // Helping Source: https://www.lemoda.net/c/recursive-directory/
 void scan_dir(char* dir_name) {
     DIR* directory;
-    directory = opendir (dir_name);
+    directory = opendir(dir_name);
 
     // if (!directory) {
     //     fprintf (stderr, "Cannot open directory '%s': %s\n",
@@ -28,14 +28,14 @@ void scan_dir(char* dir_name) {
         struct dirent * entry;
         const char * d_name;
 
-        entry = readdir (directory);
-        if (! entry) {
+        entry = readdir(directory);
+        if (!entry) {
             end = true;
         }
         else {
             d_name = entry->d_name;
 
-            if (strcmp (d_name, "..") != 0 && strcmp (d_name, ".") != 0) {
+            if (strcmp(d_name, "..") != 0 && strcmp(d_name, ".") != 0) {
                 //Checking if directory
                 if (entry->d_type & DT_DIR) {
                     int path_length;
@@ -65,10 +65,10 @@ void scan_dir(char* dir_name) {
         }
     }
 
-    if (directory && closedir (directory)) {
-        fprintf (stderr, "Could not close '%s': %s\n",
+    if (directory && closedir(directory)) {
+        fprintf(stderr, "Could not close '%s': %s\n",
                  dir_name, strerror (errno));
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 }
 
