@@ -10,15 +10,17 @@
 //include internal libraries
 #include "lib/checkfile.h"
 #include "lib/database.h"
+#include "lib/xml.h"
 
 /* sudo apt-get install libsqlite3-dev */
+/* sudo apt-get install libxml2 libxml2-dev */
 
 int check_parameter(int len, char* argv[], char* param);
 void print_manual();
 int check_package(char* package);
 
 int main (int argc, char* argv[]) {
-    if (check_package("dpkg -s libsqlite3-dev") == 1) {
+    if (check_package("dpkg -s libsqlite3-dev") == 1 && check_package("dpkg -s libxml2") == 1) {
         if (argc < 2) {
             print_manual();
         } 
@@ -33,6 +35,9 @@ int main (int argc, char* argv[]) {
             }
             else if (check_parameter(argc, argv, "--help") != 0 || check_parameter(argc, argv, "-h") != 0) {
                 print_manual();
+            }
+            else if (check_parameter(argc, argv, "--show_exclude") != 0) {
+                parseDoc("rules.xml", "exclude_path", "path");
             }
             else {
                 print_manual();
@@ -63,6 +68,7 @@ void print_manual() {
     printf("\t-c, --check\t\tFühre das Programm für ein Verzeichnis aus. Standard ist das root '/' Verzeichnis.\n");
     printf("\t-h, --help\t\tGibt diese Anleitung aus.\n");
     printf("\t-i, --init\t\tFührt die Initialanweisungen für den ersten Start des Programms aus.\n");
+    printf("\t--show_exclude\t\tZeigt die zu ignorierenden Pfade an. Pfade sind in der rules.xml Datei definiert.\n");
     printf("\nLICENSE\tGNU General Public License v3.0\n");
 }
 

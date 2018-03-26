@@ -1,14 +1,15 @@
 CC = gcc
 NAME = IDS
 CFLAGS = -Wall -Werror -pedantic
-LDFLAGS = -lssl -lcrypto -l sqlite3
-FILES = main.c checkfile.c database.c
+LDFLAGS = -lssl -lcrypto -l sqlite3 -lxml2
+LIBS = -I/usr/include/libxml2
+FILES = main.c checkfile.c database.c xml.c
 
 IDS: $(FILES)
-	$(CC) $(FILES) -o $(NAME) $(CFLAGS) $(LDFLAGS)
+	$(CC) $(FILES) -o $(NAME) $(CFLAGS) $(LIBS) $(LDFLAGS)
 
 debug: $(FILES)
-	$(CC) $(FILES) -g -o $(NAME) $(CFLAGS) $(LDFLAGS)
+	$(CC) $(FILES) -g -o $(NAME) $(CFLAGS) $(LIBS) $(LDFLAGS)
 
 clean:
 	rm $(NAME)
