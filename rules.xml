@@ -5,6 +5,7 @@
         <path>/var/cache</path>
         <path>sqlite</path>
         <path>.git</path>
+        <path>/etc/xdg/systemd</path>
     </exclude_path>
     <hash>
        <algorithm>libsodium</algorithm>

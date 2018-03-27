@@ -9,7 +9,7 @@
 
 sqlite3* connect() {
     sqlite3 *db;
-    int rc = sqlite3_open("sqlite/ids.db", &db);
+    int rc = sqlite3_open_v2("sqlite/ids.db", &db, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL);
     
     if (rc) {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -45,7 +45,7 @@ void create_table(int modus) {
        printf("Table created\n");
     }
 
-   sqlite3_close(db);
+   sqlite3_close_v2(db);
 }
 
 char* select_all_data() {
@@ -76,7 +76,7 @@ char* select_all_data() {
 
     // printf("%s\n", result);
     sqlite3_finalize(stmt);
-    sqlite3_close(db);
+    sqlite3_close_v2(db);
     return result; 
 }
 
@@ -98,7 +98,7 @@ char* select_checksum_by_path(char* path) {
         strcat(result, temp);
     }
     sqlite3_finalize(stmt);
-    sqlite3_close(db);
+    sqlite3_close_v2(db);
     return result; 
 }
 
@@ -109,7 +109,7 @@ int check_data_by_path(char* path) {
     sqlite3 *db = connect();
     sqlite3_stmt *stmt;
 
-    char *query = "SELECT id FROM filelist WHERE path = ?";
+    char *query = "SELECT * FROM filelist WHERE path = ?";
     int rc = sqlite3_prepare_v2(db, query, -1, &stmt, 0);
     sqlite3_bind_text(stmt, 1, path, -1, SQLITE_STATIC);
 
@@ -121,7 +121,7 @@ int check_data_by_path(char* path) {
         rc = 0;
     }
     sqlite3_finalize(stmt); 
-    sqlite3_close(db);
+    sqlite3_close_v2(db);
     return rc;   
 }
 
@@ -150,7 +150,7 @@ int update_data(int id, char * path, char* checksum) {
     
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
-    sqlite3_close(db); 
+    sqlite3_close_v2(db); 
     return rc;
 }
 
@@ -168,7 +168,7 @@ int insert_data(char* path, char* checksum) {
     
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt); 
-    sqlite3_close(db);
+    sqlite3_close_v2(db);
     return rc;
 }
 
