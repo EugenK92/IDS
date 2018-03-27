@@ -30,8 +30,12 @@ int main (int argc, char* argv[]) {
             }
             else if (check_parameter(argc, argv, "--check") != 0 || check_parameter(argc, argv, "-c") != 0) {
                 int pos = check_parameter(argc, argv, "--check") != 0 ? check_parameter(argc, argv, "--check") : check_parameter(argc, argv, "-c"); 
-                // check here if argv[pos + 1] exists
-                scan_dir(argv[pos + 1]);
+                if (argc > pos + 1) {
+                    scan_dir(argv[pos + 1]);
+                }
+                else {
+                    scan_dir("/");                    
+                }
             }
             else if (check_parameter(argc, argv, "--help") != 0 || check_parameter(argc, argv, "-h") != 0) {
                 print_manual();
