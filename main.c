@@ -25,16 +25,20 @@ int main (int argc, char* argv[]) {
             print_manual();
         } 
         else {
+            int modus = 0;
+            if (check_parameter(argc, argv, "--verbose") != 0 || check_parameter(argc, argv, "-v") != 0) {
+                modus = 1;
+            }
             if (check_parameter(argc, argv, "--init") != 0 || check_parameter(argc, argv, "-i") != 0) {
-                create_table(); 
+                create_table(modus); 
             }
             else if (check_parameter(argc, argv, "--check") != 0 || check_parameter(argc, argv, "-c") != 0) {
                 int pos = check_parameter(argc, argv, "--check") != 0 ? check_parameter(argc, argv, "--check") : check_parameter(argc, argv, "-c"); 
                 if (argc > pos + 1) {
-                    scan_dir(argv[pos + 1]);
+                    scan_dir(argv[pos + 1], modus);
                 }
                 else {
-                    scan_dir("/");                    
+                    scan_dir("/", modus);                    
                 }
             }
             else if (check_parameter(argc, argv, "--help") != 0 || check_parameter(argc, argv, "-h") != 0) {
@@ -73,6 +77,7 @@ void print_manual() {
     printf("\t-h, --help\t\tGibt diese Anleitung aus.\n");
     printf("\t-i, --init\t\tFührt die Initialanweisungen für den ersten Start des Programms aus.\n");
     printf("\t--show_exclude\t\tZeigt die zu ignorierenden Pfade an. Pfade sind in der rules.xml Datei definiert.\n");
+    printf("\t-v, --verbose\t\tZeigt ausführliche Informationen an.\n");
     printf("\nLICENSE\tGNU General Public License v3.0\n");
 }
 

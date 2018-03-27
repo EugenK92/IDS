@@ -13,7 +13,7 @@
 #include "lib/database.h"
 
 // Helping Source: https://www.lemoda.net/c/recursive-directory/
-void scan_dir(char* dir_name) {
+void scan_dir(char* dir_name, int modus) {
     DIR* directory;
     directory = opendir(dir_name);
 
@@ -28,16 +28,13 @@ void scan_dir(char* dir_name) {
         struct dirent * entry;
         const char * d_name;
         entry = readdir(directory);
-        // printf("HEEEE\n");
         if (!entry) {
             end = true;
         }
         else {
             d_name = entry->d_name;
-            // printf("%s\n", d_name);
             if (strcmp(d_name, "..") != 0 && strcmp(d_name, ".") != 0) {
                 //Checking if directory
-                // printf("blub1\n");
                 if (entry->d_type & DT_DIR) {
                     int path_length;
                     char path[PATH_MAX];
@@ -48,8 +45,10 @@ void scan_dir(char* dir_name) {
                         fprintf (stderr, "Path length has got too long.\n");
                         exit (EXIT_FAILURE);
                     }
-                    // printf("%s\n", path);
-                    scan_dir(path);
+                    if (modus == 1) {
+                        printf("Checking directory: %s\n", path);
+                    }
+                    scan_dir(path, modus);
                 }
                 else if (entry->d_type & DT_REG) {
                     char* output = (char*) malloc(sizeof(char) * 65);
@@ -58,9 +57,14 @@ void scan_dir(char* dir_name) {
                     strcat(path, dir_name);
                     strcat(path, "/");
                     strcat(path, d_name);
+                    if (modus == 1) {
+                        printf("Checking file: %s\n", path);
+                    }
                     output = calc_sha256(path);
-                    // printf("%s\n", output);
-                    put_data(path, output);
+                    if (modus == 1) {
+                        printf("Checksum: %s\n", output);
+                    }
+                    put_data(path, output, modus);
                 }      
             }
         }
@@ -106,10 +110,8 @@ char* calc_sha256 (char* path) {
         const int bufSize = 65535;
         char* buffer = (char*) malloc(sizeof(char) * bufSize);
         int bytesRead = 0;
-        // printf("STAT: %d\n", check_directory(path));
         if (check_directory(path) == 1) {
             while((bytesRead = fread(buffer, 1, bufSize, file))) {
-                // printf("sha here\n");
                 SHA256_Update(&sha256, buffer, bytesRead);
             }
 

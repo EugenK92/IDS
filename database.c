@@ -27,9 +27,8 @@ int count_data(void *db, int argc, char **argv, char **azColName) {
     return argc;
 }
 
-void create_table() {
+void create_table(int modus) {
     sqlite3 *db = connect();
-
     char *query = "CREATE TABLE IF NOT EXISTS filelist (" \
                   " id INTEGER PRIMARY KEY AUTOINCREMENT," \
                   " path TEXT," \
@@ -43,6 +42,9 @@ void create_table() {
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", errmsg);
         sqlite3_free(errmsg); 
+    }
+    if (modus == 1) {
+       printf("Table created\n");
     }
 
    sqlite3_close(db);
@@ -195,17 +197,21 @@ int check_file_change(int id, char * path, char* current_checksum) {
     return strcmp(current_checksum, data);
 }
 
-int put_data(char* path, char* checksum) {
+int put_data(char* path, char* checksum, int modus) {
     int result = 0;
     int data = check_data_by_path(path);
     if (data == 0) {
         result = insert_data(path, checksum);
-        printf("New file was found: %s\n", path);
+        if (modus == 1) {
+            printf("New file was found: %s\n", path);
+        }
     }
     else {
         result = check_file_change(data, path, checksum);
         if (result != 0) {
-            printf("File: %s was changed\n", path);
+            if (modus == 1) {
+                printf("File: %s was changed\n", path);
+            }           
         }
     }
 
