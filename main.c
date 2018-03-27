@@ -26,6 +26,12 @@ int main (int argc, char* argv[]) {
         } 
         else {
             int modus = 0;
+            if (check_parameter(argc, argv, "--show_new") != 0 || check_parameter(argc, argv, "-v") != 0) {
+                modus = 3;
+            }
+            if (check_parameter(argc, argv, "--show_changed") != 0 || check_parameter(argc, argv, "-v") != 0) {
+                modus = 2;
+            }
             if (check_parameter(argc, argv, "--verbose") != 0 || check_parameter(argc, argv, "-v") != 0) {
                 modus = 1;
             }
@@ -76,7 +82,9 @@ void print_manual() {
     printf("\t-c, --check\t\tFühre das Programm für ein Verzeichnis aus. Standard ist das root '/' Verzeichnis.\n");
     printf("\t-h, --help\t\tGibt diese Anleitung aus.\n");
     printf("\t-i, --init\t\tFührt die Initialanweisungen für den ersten Start des Programms aus.\n");
+    printf("\t--show_changed\t\tZeigt die geänderten Dateien an. Wenn die --verbose Option verwendet wird, wird diese Option ignoriert.\n");
     printf("\t--show_exclude\t\tZeigt die zu ignorierenden Pfade an. Pfade sind in der rules.xml Datei definiert.\n");
+    printf("\t--show_new\t\tZeigt die neuen Dateien an. Wenn die --verbose oder --show_changed Option verwendet wird, wird diese Option ignoriert.\n");
     printf("\t-v, --verbose\t\tZeigt ausführliche Informationen an.\n");
     printf("\nLICENSE\tGNU General Public License v3.0\n");
 }

@@ -202,14 +202,14 @@ int put_data(char* path, char* checksum, int modus) {
     int data = check_data_by_path(path);
     if (data == 0) {
         result = insert_data(path, checksum);
-        if (modus == 1) {
+        if (modus == 1 || modus == 3) {
             printf("New file was found: %s\n", path);
         }
     }
     else {
         result = check_file_change(data, path, checksum);
         if (result != 0) {
-            if (modus == 1) {
+            if (modus == 1 || modus == 2) {
                 printf("File: %s was changed\n", path);
             }           
         }
