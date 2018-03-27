@@ -215,6 +215,7 @@ int put_data(char* path, char* checksum, int modus, int update) {
         }
         if (update == 1) {
            update_data(data, path, checksum);
+           printf("Entry: %s %s updated\n", path, checksum);
         }
     }
 

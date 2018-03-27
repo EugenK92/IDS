@@ -6,4 +6,7 @@
         <path>sqlite</path>
         <path>.git</path>
     </exclude_path>
+    <hash>
+       <algorithm>libsodium</algorithm>
+    </hash>
 </rules>

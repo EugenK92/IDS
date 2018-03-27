@@ -25,6 +25,7 @@ int main (int argc, char* argv[]) {
             print_manual();
         } 
         else {
+            //Source: https://stackoverflow.com/a/4159919
             if (geteuid() != 0) {
                printf("Sie führen das Programm ohne root Rechte aus. Einige Dateien können möglicherweise nicht geöffnet werden.\n");
             }
@@ -95,6 +96,9 @@ void print_manual() {
     printf("\t--show_new\t\tZeigt die neuen Dateien an. Wenn die --verbose oder --show_changed Option verwendet wird, wird diese Option ignoriert.\n");
     printf("\t-u, --update\t\tAktualisiert die Checksumme für geänderte Dateien. Diese Option wird zusammen mit --check verwendet.\n");
     printf("\t-v, --verbose\t\tZeigt ausführliche Informationen an.\n");
+    printf("\nVerfügbare Hashalgorithmen:\n");
+    printf("\tSHA256\n");
+    printf("\tlibsodium Benutzt BLAKE2b\n");
     printf("\nLICENSE\tGNU General Public License v3.0\n");
 }
 

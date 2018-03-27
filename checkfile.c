@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <limits.h>
 
+#include "lib/hash.h"
 #include "lib/checkfile.h"
 #include "lib/database.h"
 #include "lib/xml.h"
@@ -111,54 +112,4 @@ int check_if_allowed_path(char* path) {
     free (res);   
 
     return end;
-}
-
-// Source: https://stackoverflow.com/a/4553076
-int check_directory(const char* path) {
-   //printf("Checking: %s\n", path);
-    struct stat path_stat;
-    if (stat(path, &path_stat) == -1) {
-      //perror("while calling stat()");
-      return -1;
-   } 
-   else {
-       if (S_ISREG(path_stat.st_mode & S_IFMT)) {
-           return 1;
-       }
-       else if (S_ISFIFO(path_stat.st_mode & S_IFMT) || 
-                S_ISSOCK(path_stat.st_mode & S_IFMT)) {
-           return 2;
-       }
-       return 0;
-   }
-}
-
-// Source: https://stackoverflow.com/questions/7853156/calculate-and-print-sha256-hash-of-a-file-using-openssl
-char* calc_sha256 (char* path) {
-    FILE* file = fopen(path, "rb");
-    char* output = (char*) malloc(sizeof(char) * 65);
-    strcpy(output, "");
-    if (file) {
-        unsigned char hash[SHA256_DIGEST_LENGTH];
-        SHA256_CTX sha256;
-        SHA256_Init(&sha256);
-        const int bufSize = 65535;
-        char* buffer = (char*) malloc(sizeof(char) * bufSize);
-        int bytesRead = 0;
-        if (check_directory(path) == 1) {
-            while((bytesRead = fread(buffer, 1, bufSize, file))) {
-                SHA256_Update(&sha256, buffer, bytesRead);
-            }
-
-            SHA256_Final(hash, &sha256);
-
-            for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-                sprintf(output + (i * 2), "%02x", hash[i]);
-            }
-        }
-
-        fclose(file);
-        free(buffer);
-    }
-    return output;
-}      
+}  
