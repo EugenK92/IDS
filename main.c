@@ -25,6 +25,10 @@ int main (int argc, char* argv[]) {
             print_manual();
         } 
         else {
+            if (geteuid() != 0) {
+               printf("Sie führen das Programm ohne root Rechte aus. Einige Dateien können möglicherweise nicht geöffnet werden.\n");
+            }
+
             int modus = 0;
             if (check_parameter(argc, argv, "--show_new") != 0 || check_parameter(argc, argv, "-v") != 0) {
                 modus = 3;
