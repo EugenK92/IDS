@@ -25,10 +25,6 @@ int callback(void *db, int argc, char **argv, char **azColName) {
     return 0;
 }
 
-int count_data(void *db, int argc, char **argv, char **azColName) {
-    return argc;
-}
-
 void create_table(int modus) {
     sqlite3 *db = connect();
     char *query = "CREATE TABLE IF NOT EXISTS filelist (" \
@@ -175,24 +171,6 @@ int insert_data(char* path, char* checksum) {
     sqlite3_close(db);
     return rc;
 }
-
-// works for checksum only at the moment
-// char* filter_value(char* data, char* param) {
-//     char* new_string =  strstr(data, param);
-//     char* end = strchr(new_string, ';');
-
-//     int len = end - new_string;
-//     char* dest = (char*) malloc(sizeof(char) * len);
-//     memmove(dest, new_string, len);
-//     // printf("%s\n", dest);
-//     // +1 for the '=' char
-//     int param_len = sizeof(param) + 1;
-//     int new_len = len - param_len;
-//     char* value = (char*) malloc(sizeof(char) * new_len);
-//     memmove(value, dest + param_len, new_len);
-//     free(dest);
-//     return value;
-// }
 
 int check_file_change(char* path, char* current_checksum) {
     char* data = select_checksum_by_path(path);

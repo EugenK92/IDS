@@ -44,6 +44,8 @@ int main (int argc, char* argv[]) {
                 create_table(modus); 
             }
             else if (check_parameter(argc, argv, "--check") != 0 || check_parameter(argc, argv, "-c") != 0) {
+                //create table if not exists w/o mention it
+                create_table(0);
                 int pos = check_parameter(argc, argv, "--check") != 0 ? check_parameter(argc, argv, "--check") : check_parameter(argc, argv, "-c"); 
                 int update = 0;
                 if (check_parameter(argc, argv, "--update") != 0 || check_parameter(argc, argv, "-u") != 0) {

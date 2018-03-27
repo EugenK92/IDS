@@ -6,7 +6,6 @@
 sqlite3* connect();
 int callback(void *, int, char**, char**);
 void create_table(int);
-int count_data(void *, int, char**, char**);
 int check_data_by_path(char*);
 int check_file_change(char*, char*);
 char* select_checksum_by_path(char*);
