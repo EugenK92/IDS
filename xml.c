@@ -6,7 +6,7 @@
 
 #include "lib/xml.h"
  
-void parseNode(xmlDocPtr doc, xmlNodePtr cur, char* subchild) {
+void parseNode(xmlDocPtr doc, xmlNodePtr cur, char* subchild, char* paths, int show) {
  
     xmlChar *key;
     cur = cur->xmlChildrenNode;
@@ -15,8 +15,12 @@ void parseNode(xmlDocPtr doc, xmlNodePtr cur, char* subchild) {
         if ((!xmlStrcmp(cur->name, (const xmlChar *)subchild)))
         {
             key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
- 
-            printf("%s\n", key);
+
+            if (show == 1) {
+                printf("%s\n", key);
+            }
+            strcat(paths, ";");
+            strcat(paths, (const char*)key);
             xmlFree(key);
         }
         cur = cur->next;
@@ -24,11 +28,13 @@ void parseNode(xmlDocPtr doc, xmlNodePtr cur, char* subchild) {
     return;
 }
  
-void parseDoc(char *docname, char *child, char *subchild) {
+char* parseDoc(char *docname, char *child, char *subchild, int show) {
  
     xmlDocPtr doc;
     xmlNodePtr cur;
  
+    char* paths = (char*) malloc(sizeof(char) * 1024);
+    strcpy(paths, "");
     doc = xmlParseFile(docname);
  
     if (doc == NULL )
@@ -47,11 +53,11 @@ void parseDoc(char *docname, char *child, char *subchild) {
     {
         if ((!xmlStrcmp(cur->name, (const xmlChar *)child)))
         {
-            parseNode (doc, cur, subchild);
+            parseNode(doc, cur, subchild, paths, show);
         }
         cur = cur->next;
     }
  
     xmlFreeDoc(doc);
-    return;
+    return paths;
 }

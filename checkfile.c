@@ -9,8 +9,10 @@
 #include <unistd.h>
 #include <errno.h>
 #include <limits.h>
+
 #include "lib/checkfile.h"
 #include "lib/database.h"
+#include "lib/xml.h"
 
 // Helping Source: https://www.lemoda.net/c/recursive-directory/
 void scan_dir(char* dir_name, int modus) {
@@ -33,7 +35,7 @@ void scan_dir(char* dir_name, int modus) {
         }
         else {
             d_name = entry->d_name;
-            if (strcmp(d_name, "..") != 0 && strcmp(d_name, ".") != 0) {
+            if (strcmp(d_name, "..") != 0 && strcmp(d_name, ".") != 0 && check_if_allowed_path((char*)dir_name) == 1) {
                 //Checking if directory
                 if (entry->d_type & DT_DIR) {
                     int path_length;
@@ -78,7 +80,40 @@ void scan_dir(char* dir_name, int modus) {
     }
 }
 
-// Source: https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file
+//Split String Source: https://stackoverflow.com/a/11198630
+int check_if_allowed_path(char* path) {
+    char* paths = parseDoc("rules.xml", "exclude_path", "path", 0);
+    char ** res  = NULL;
+    char *  p    = strtok (paths, ";");
+    int n_spaces = 0;
+
+    while (p) {
+        res = realloc (res, sizeof (char*) * ++n_spaces);
+        if (res == NULL) {
+            exit(-1);
+        }
+        res[n_spaces-1] = p;
+        p = strtok (NULL, ";");
+    }
+
+    res = realloc (res, sizeof (char*) * (n_spaces+1));
+    res[n_spaces] = 0;
+
+    int i = 0;
+    int end = 1;
+    while (end != 0 && i < n_spaces) {
+        if (strstr(path, res[i]) != NULL) {
+            end = 0;
+        }
+        i++;
+    }
+
+    free (res);   
+
+    return end;
+}
+
+// Source: https://stackoverflow.com/a/4553076
 int check_directory(const char* path) {
    //printf("Checking: %s\n", path);
     struct stat path_stat;

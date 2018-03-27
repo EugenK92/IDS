@@ -45,7 +45,7 @@ int main (int argc, char* argv[]) {
                 print_manual();
             }
             else if (check_parameter(argc, argv, "--show_exclude") != 0) {
-                parseDoc("rules.xml", "exclude_path", "path");
+                parseDoc("rules.xml", "exclude_path", "path", 1);
             }
             else {
                 print_manual();

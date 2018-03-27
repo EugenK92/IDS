@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rules>
     <exclude_path>
-        <path>/var/logs/</path>
-        <path>sqlite/</path>
+        <path>/var/log</path>
+        <path>/var/cache</path>
+        <path>sqlite</path>
+        <path>.git</path>
     </exclude_path>
 </rules>
