@@ -34,11 +34,29 @@ int check_directory(const char* path) {
    }
 }  
 
+int get_output_size() {
+    int size = 0;
+    char* algorithm = parseDoc("rules.xml", "hash", "algorithm", 0);
+    memmove(algorithm, algorithm+1, strlen(algorithm));
+    
+    if (strcmp(algorithm, "libsodium") == 0) {
+        size = 64 * 2 + 1;
+    }
+    else if (strcmp(algorithm, "SHA256") == 0) {
+        size = SHA256_DIGEST_LENGTH * 2 + 1;
+    }
+    else if (strcmp(algorithm, "SHA512") == 0) {
+        size = SHA512_DIGEST_LENGTH * 2 + 1;
+    }    
+
+    return size;
+}
+
 //Source: https://www.reddit.com/r/crypto/comments/7ooot2/using_libsodiums_generic_hash_to_hash_a_file/
 char* hash_libsodium(char* path) {
 
     int hash_size = 64;
-    char hex[(hash_size * 2) + 1];
+    char* hex = (char*) malloc(sizeof(char) * (hash_size * 2 + 1));
     if (sodium_init() < 0) {
         printf("Cannot use this. Because of reasons\n");
     }
@@ -56,18 +74,20 @@ char* hash_libsodium(char* path) {
                 crypto_generichash_update(&state,buf,read);
             }
             crypto_generichash_final(&state, out, hash_size);
-            sodium_bin2hex(hex, sizeof hex, out, hash_size);
+            
+            for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+                sprintf(hex + (i * 2), "%02x", out[i]);
+            }
         }
     }
 
-    char* output = hex;
-    return output;
+    return hex;
 }
 
 // Source: https://stackoverflow.com/questions/7853156/calculate-and-print-sha256-hash-of-a-file-using-openssl
 char* hash_sha256(char* path) {
     FILE* file = fopen(path, "rb");
-    char* output = (char*) malloc(sizeof(char) * 65);
+    char* output = (char*) malloc(sizeof(char) * (SHA256_DIGEST_LENGTH * 2 + 1));
     strcpy(output, "");
     if (file) {
         unsigned char hash[SHA256_DIGEST_LENGTH];
@@ -95,18 +115,50 @@ char* hash_sha256(char* path) {
     return output;
 }
 
-char* calc_sha256 (char* path) {
+char* hash_sha512(char* path) {
+    FILE* file = fopen(path, "rb");
+    char* output = (char*) malloc(sizeof(char) * (SHA512_DIGEST_LENGTH * 2 + 1));
+    strcpy(output, "");
+    if (file) {
+        unsigned char hash[SHA512_DIGEST_LENGTH];
+        SHA512_CTX sha512;
+        SHA512_Init(&sha512);
+        const int bufSize = 65535;
+        char* buffer = (char*) malloc(sizeof(char) * bufSize);
+        int bytesRead = 0;
+        if (check_directory(path) == 1) {
+            while((bytesRead = fread(buffer, 1, bufSize, file))) {
+                SHA512_Update(&sha512, buffer, bytesRead);
+            }
+            SHA512_Final(hash, &sha512);
+
+            for (int i = 0; i < SHA512_DIGEST_LENGTH; i++) {
+                sprintf(output + (i * 2), "%02x", hash[i]);
+            }
+        }
+
+        fclose(file);
+        free(buffer);
+    }
+
+    return output;
+}
+
+char* calc_checksum (char* path) {
 
     char* algorithm = parseDoc("rules.xml", "hash", "algorithm", 0);
     memmove(algorithm, algorithm+1, strlen(algorithm));
-    char* output = (char*) malloc(sizeof(char) * 65);
+    char* output = (char*) malloc(sizeof(char) * get_output_size());
     strcpy(output, "");
     
     if (strcmp(algorithm, "libsodium") == 0) {
         output = hash_libsodium(path);
     }
     else if (strcmp(algorithm, "SHA256") == 0) {
-        output =  hash_sha256(path);
+        output = hash_sha256(path);
+    }
+    else if (strcmp(algorithm, "SHA512") == 0) {
+        output = hash_sha512(path);
     }
     return output;
 }  

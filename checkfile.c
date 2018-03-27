@@ -54,7 +54,8 @@ void scan_dir(char* dir_name, int modus, int update) {
                     scan_dir(path, modus, update);
                 }
                 else if (entry->d_type & DT_REG) {
-                    char* output = (char*) malloc(sizeof(char) * 65);
+                    int output_size = get_output_size();
+                    char* output = (char*) malloc(sizeof(char) * output_size);
                     char* path = (char*) malloc(sizeof(char) * PATH_MAX);
                     strcpy(path,"");
                     strcat(path, dir_name);
@@ -63,7 +64,7 @@ void scan_dir(char* dir_name, int modus, int update) {
                     if (modus == 1) {
                         printf("Checking file: %s\n", path);
                     }
-                    output = calc_sha256(path);
+                    output = calc_checksum(path);
                     if (modus == 1) {
                         printf("Checksum: %s\n", output);
                     }

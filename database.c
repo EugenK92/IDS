@@ -5,6 +5,8 @@
 #include <sqlite3.h>
 #include <time.h> 
 
+#include "lib/hash.h"
+
 sqlite3* connect() {
     sqlite3 *db;
     int rc = sqlite3_open("sqlite/ids.db", &db);
@@ -94,8 +96,9 @@ char* select_checksum_by_path(char* path) {
     /* remove garbage */
     strcpy(result,"");
     char* temp = (char *) malloc(sizeof(char) * 512);
+    int size = get_output_size();
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        snprintf(temp, 80, "%s", sqlite3_column_text(stmt, 0));
+        snprintf(temp, size, "%s", sqlite3_column_text(stmt, 0));
         strcat(result, temp);
     }
     sqlite3_finalize(stmt);
@@ -104,13 +107,13 @@ char* select_checksum_by_path(char* path) {
 }
 
 /**
- * returns 0 if data is available
+ * returns 0 if data is not available
 */
 int check_data_by_path(char* path) {
     sqlite3 *db = connect();
     sqlite3_stmt *stmt;
 
-    char *query = "SELECT * FROM filelist WHERE path = ?";
+    char *query = "SELECT id FROM filelist WHERE path = ?";
     int rc = sqlite3_prepare_v2(db, query, -1, &stmt, 0);
     sqlite3_bind_text(stmt, 1, path, -1, SQLITE_STATIC);
 
@@ -191,9 +194,8 @@ int insert_data(char* path, char* checksum) {
 //     return value;
 // }
 
-int check_file_change(int id, char * path, char* current_checksum) {
+int check_file_change(char* path, char* current_checksum) {
     char* data = select_checksum_by_path(path);
-    // printf("%s\n%s\n", data, current_checksum);
     return strcmp(current_checksum, data);
 }
 
@@ -207,15 +209,15 @@ int put_data(char* path, char* checksum, int modus, int update) {
         }
     }
     else {
-        result = check_file_change(data, path, checksum);
+        result = check_file_change(path, checksum);
         if (result != 0) {
             if (modus == 1 || modus == 2) {
                 printf("File: %s was changed\n", path);
             }           
         }
         if (update == 1) {
-           update_data(data, path, checksum);
-           printf("Entry: %s %s updated\n", path, checksum);
+            update_data(data, path, checksum);
+            printf("Entry: %s %s updated\n", path, checksum);
         }
     }
 
