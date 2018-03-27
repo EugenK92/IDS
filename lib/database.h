@@ -14,6 +14,6 @@ char* select_all_data();
 int update_data(int, char*, char*);
 char* get_current_timestamp();
 int insert_data(char*, char*);
-int put_data(char*, char*, int);
+int put_data(char*, char*, int, int);
 
 #endif /* DATABASE_H */

@@ -15,7 +15,7 @@
 #include "lib/xml.h"
 
 // Helping Source: https://www.lemoda.net/c/recursive-directory/
-void scan_dir(char* dir_name, int modus) {
+void scan_dir(char* dir_name, int modus, int update) {
     DIR* directory;
     directory = opendir(dir_name);
 
@@ -50,7 +50,7 @@ void scan_dir(char* dir_name, int modus) {
                     if (modus == 1) {
                         printf("Checking directory: %s\n", path);
                     }
-                    scan_dir(path, modus);
+                    scan_dir(path, modus, update);
                 }
                 else if (entry->d_type & DT_REG) {
                     char* output = (char*) malloc(sizeof(char) * 65);
@@ -66,7 +66,7 @@ void scan_dir(char* dir_name, int modus) {
                     if (modus == 1) {
                         printf("Checksum: %s\n", output);
                     }
-                    put_data(path, output, modus);
+                    put_data(path, output, modus, update);
                 }      
             }
         }

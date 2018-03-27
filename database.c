@@ -197,7 +197,7 @@ int check_file_change(int id, char * path, char* current_checksum) {
     return strcmp(current_checksum, data);
 }
 
-int put_data(char* path, char* checksum, int modus) {
+int put_data(char* path, char* checksum, int modus, int update) {
     int result = 0;
     int data = check_data_by_path(path);
     if (data == 0) {
@@ -212,6 +212,9 @@ int put_data(char* path, char* checksum, int modus) {
             if (modus == 1 || modus == 2) {
                 printf("File: %s was changed\n", path);
             }           
+        }
+        if (update == 1) {
+           update_data(data, path, checksum);
         }
     }
 

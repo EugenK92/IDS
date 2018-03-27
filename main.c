@@ -40,11 +40,15 @@ int main (int argc, char* argv[]) {
             }
             else if (check_parameter(argc, argv, "--check") != 0 || check_parameter(argc, argv, "-c") != 0) {
                 int pos = check_parameter(argc, argv, "--check") != 0 ? check_parameter(argc, argv, "--check") : check_parameter(argc, argv, "-c"); 
+                int update = 0;
+                if (check_parameter(argc, argv, "--update") != 0 || check_parameter(argc, argv, "-u") != 0) {
+                    update = 1;
+                }
                 if (argc > pos + 1) {
-                    scan_dir(argv[pos + 1], modus);
+                    scan_dir(argv[pos + 1], modus, update);
                 }
                 else {
-                    scan_dir("/", modus);                    
+                    scan_dir("/", modus, update);                    
                 }
             }
             else if (check_parameter(argc, argv, "--help") != 0 || check_parameter(argc, argv, "-h") != 0) {
@@ -85,6 +89,7 @@ void print_manual() {
     printf("\t--show_changed\t\tZeigt die geänderten Dateien an. Wenn die --verbose Option verwendet wird, wird diese Option ignoriert.\n");
     printf("\t--show_exclude\t\tZeigt die zu ignorierenden Pfade an. Pfade sind in der rules.xml Datei definiert.\n");
     printf("\t--show_new\t\tZeigt die neuen Dateien an. Wenn die --verbose oder --show_changed Option verwendet wird, wird diese Option ignoriert.\n");
+    printf("\t-u, --update\t\tAktualisiert die Checksumme für geänderte Dateien. Diese Option wird zusammen mit --check verwendet.\n");
     printf("\t-v, --verbose\t\tZeigt ausführliche Informationen an.\n");
     printf("\nLICENSE\tGNU General Public License v3.0\n");
 }
