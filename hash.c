@@ -14,6 +14,15 @@
 #include "lib/hash.h"
 #include "lib/xml.h"
 
+int get_file_size(FILE* file) {
+    size_t len;
+    fseek(file, 0, SEEK_END);
+    len = ftell(file);
+    rewind(file);
+
+    return len;
+}
+
 // Source: https://stackoverflow.com/a/4553076
 int check_directory(const char* path) {
    //printf("Checking: %s\n", path);
@@ -70,15 +79,25 @@ char* hash_libsodium(char* path) {
 
         FILE* file = fopen(path, "rb");
         if (file) {
+            size_t len = get_file_size(file);
             crypto_generichash_init(&state, NULL, 0, hash_size);
-            while(!feof(file)) {
-                read = fread(buf, 1, buff_size, file);
-                crypto_generichash_update(&state,buf,read);
+            int fail = false;
+            if (len != -1) {
+                while(!feof(file) && !fail) { 
+                    read = fread(buf, 1, buff_size, file);
+                    if (read * sizeof(buf) > 0) {
+                        crypto_generichash_update(&state,buf,read);
+                    }
+                    else {
+                        fail = true;
+                    }
+                }
+                crypto_generichash_final(&state, out, hash_size);
+                for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+                    sprintf(hex + (i * 2), "%02x", out[i]);
+                }
             }
-            crypto_generichash_final(&state, out, hash_size);
-            for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-                sprintf(hex + (i * 2), "%02x", out[i]);
-            }
+
             fclose(file);
         }
 
@@ -93,21 +112,24 @@ char* hash_sha256(char* path) {
     char* output = (char*) malloc(sizeof(char) * (SHA256_DIGEST_LENGTH * 2 + 1));
     strcpy(output, "");
     if (file) {
-        unsigned char hash[SHA256_DIGEST_LENGTH];
-        SHA256_CTX sha256;
-        SHA256_Init(&sha256);
         const int bufSize = 65535;
         char* buffer = (char*) malloc(sizeof(char) * bufSize);
-        int bytesRead = 0;
-        if (check_directory(path) == 1) {
-            while((bytesRead = fread(buffer, 1, bufSize, file))) {
-                SHA256_Update(&sha256, buffer, bytesRead);
-            }
+        size_t len = get_file_size(file);
+        if (len != -1) {
+            unsigned char hash[SHA256_DIGEST_LENGTH];
+            SHA256_CTX sha256;
+            SHA256_Init(&sha256);
+            int bytesRead = 0;
+            if (check_directory(path) == 1) {
+                while((bytesRead = fread(buffer, 1, bufSize, file))) {
+                    SHA256_Update(&sha256, buffer, bytesRead);
+                }
 
-            SHA256_Final(hash, &sha256);
+                SHA256_Final(hash, &sha256);
 
-            for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-                sprintf(output + (i * 2), "%02x", hash[i]);
+                for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+                    sprintf(output + (i * 2), "%02x", hash[i]);
+                }
             }
         }
 
@@ -123,20 +145,23 @@ char* hash_sha512(char* path) {
     char* output = (char*) malloc(sizeof(char) * (SHA512_DIGEST_LENGTH * 2 + 1));
     strcpy(output, "");
     if (file) {
-        unsigned char hash[SHA512_DIGEST_LENGTH];
-        SHA512_CTX sha512;
-        SHA512_Init(&sha512);
         const int bufSize = 65535;
         char* buffer = (char*) malloc(sizeof(char) * bufSize);
-        int bytesRead = 0;
-        if (check_directory(path) == 1) {
-            while((bytesRead = fread(buffer, 1, bufSize, file))) {
-                SHA512_Update(&sha512, buffer, bytesRead);
-            }
-            SHA512_Final(hash, &sha512);
+        size_t len = get_file_size(file);
+        if (len != -1) {
+            unsigned char hash[SHA512_DIGEST_LENGTH];
+            SHA512_CTX sha512;
+            SHA512_Init(&sha512);
+            int bytesRead = 0;
+            if (check_directory(path) == 1) {
+                while((bytesRead = fread(buffer, 1, bufSize, file))) {
+                    SHA512_Update(&sha512, buffer, bytesRead);
+                }
+                SHA512_Final(hash, &sha512);
 
-            for (int i = 0; i < SHA512_DIGEST_LENGTH; i++) {
-                sprintf(output + (i * 2), "%02x", hash[i]);
+                for (int i = 0; i < SHA512_DIGEST_LENGTH; i++) {
+                    sprintf(output + (i * 2), "%02x", hash[i]);
+                }
             }
         }
 
@@ -153,7 +178,6 @@ char* calc_checksum (char* path) {
     memmove(algorithm, algorithm+1, strlen(algorithm));
     char* output = (char*) malloc(sizeof(char) * get_output_size());
     strcpy(output, "");
-    
     if (strcmp(algorithm, "libsodium") == 0) {
         output = hash_libsodium(path);
     }

@@ -1,6 +1,7 @@
 #ifndef HASH_H
 #define HASH_H
 
+int get_file_size(FILE*);
 int check_directory(const char *);
 int get_output_size();
 char* hash_libsodium(char*);

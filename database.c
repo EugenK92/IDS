@@ -183,25 +183,27 @@ int put_data(char* path, char* checksum, int modus, int update) {
     int data = check_data_by_path(path);
     if (data == 0) {
         result = insert_data(path, checksum);
-        if (modus == 1 || modus == 3) {
-            printf("New file was found: %s\n", path);
-        }
         char* log_string = (char*) malloc (sizeof(char*) * 128);
         strcpy(log_string, "New file was found: ");
         strcat(log_string, path);
-        write_to_logfile(log_string, get_current_timestamp());
+        if (modus == 1 || modus == 3) {
+            printf("New file was found: %s\n", path);
+            write_to_logfile(log_string, get_current_timestamp(), "log_newfile.txt");
+        }
+        write_to_logfile(log_string, get_current_timestamp(), "log.txt");
     }
     else {
         result = check_file_change(path, checksum);
         if (result != 0) {
-            if (modus == 1 || modus == 2) {
-                printf("File: %s was changed\n", path);
-            }           
             char* log_string = (char*) malloc (sizeof(char*) * 128);
             strcpy(log_string, "File: ");
             strcat(log_string, path);
             strcat(log_string, " was changed");
-            write_to_logfile(log_string, get_current_timestamp());            
+            if (modus == 1 || modus == 2) {
+                printf("File: %s was changed\n", path);
+                write_to_logfile(log_string, get_current_timestamp(), "log_changedfile.txt");            
+            }           
+            write_to_logfile(log_string, get_current_timestamp(), "log.txt");            
         }
         if (update == 1) {
             update_data(data, path, checksum);

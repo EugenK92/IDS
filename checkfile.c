@@ -70,7 +70,7 @@ void scan_dir(char* dir_name, int modus, int update) {
                         printf("Checksum: %s\n", output);
                     }
                     put_data(path, output, modus, update);
-                }      
+                }  
             }
         }
 

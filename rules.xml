@@ -6,6 +6,9 @@
         <path>sqlite</path>
         <path>.git</path>
         <path>/etc/xdg/systemd</path>
+        <path>/opt</path>
+        <path>/dev</path>
+        <path>/sys/kernel/debug/regmap</path>
     </exclude_path>
     <hash>
        <algorithm>libsodium</algorithm>
