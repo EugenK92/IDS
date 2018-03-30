@@ -20,11 +20,12 @@ void scan_dir(char* dir_name, int modus, int update) {
     DIR* directory;
     directory = opendir(dir_name);
 
-    if (!directory) {
-        fprintf (stderr, "Cannot open directory '%s': %s\n",
-                 dir_name, strerror (errno));
-        //exit (EXIT_FAILURE);
-    }
+    // if (!directory) {
+    //     fprintf (stderr, "Cannot open directory '%s': %s\n",
+    //              dir_name, strerror (errno));
+    //     //exit (EXIT_FAILURE);
+    //     return;
+    // }
 
     int end = false;
     while (!end && directory) {

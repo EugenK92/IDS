@@ -63,7 +63,8 @@ char* hash_libsodium(char* path) {
     else {
         int buff_size = 255;
         crypto_generichash_state state;
-        unsigned char buf[buff_size], out[hash_size];
+        unsigned char buf[buff_size];
+        unsigned char out[hash_size];
         size_t read;
 
         FILE* file = fopen(path, "rb");
@@ -79,6 +80,7 @@ char* hash_libsodium(char* path) {
                 sprintf(hex + (i * 2), "%02x", out[i]);
             }
         }
+
     }
 
     return hex;

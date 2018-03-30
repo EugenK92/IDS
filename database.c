@@ -6,6 +6,7 @@
 #include <time.h> 
 
 #include "lib/hash.h"
+#include "lib/log.h"
 
 sqlite3* connect() {
     sqlite3 *db;
@@ -185,6 +186,10 @@ int put_data(char* path, char* checksum, int modus, int update) {
         if (modus == 1 || modus == 3) {
             printf("New file was found: %s\n", path);
         }
+        char* log_string = (char*) malloc (sizeof(char*) * 128);
+        strcpy(log_string, "New file was found: ");
+        strcat(log_string, path);
+        write_to_logfile(log_string, get_current_timestamp());
     }
     else {
         result = check_file_change(path, checksum);
@@ -192,6 +197,11 @@ int put_data(char* path, char* checksum, int modus, int update) {
             if (modus == 1 || modus == 2) {
                 printf("File: %s was changed\n", path);
             }           
+            char* log_string = (char*) malloc (sizeof(char*) * 128);
+            strcpy(log_string, "File: ");
+            strcat(log_string, path);
+            strcat(log_string, " was changed");
+            write_to_logfile(log_string, get_current_timestamp());            
         }
         if (update == 1) {
             update_data(data, path, checksum);

@@ -14,6 +14,7 @@
 
 /* sudo apt-get install libsqlite3-dev */
 /* sudo apt-get install libxml2 libxml2-dev */
+/* after installing libsodium -> sudo ln -s /usr/local/lib/libsodium.so.23 /usr/lib/libsodium.so.23*/
 
 int check_parameter(int len, char* argv[], char* param);
 void print_manual();
