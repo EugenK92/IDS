@@ -8,6 +8,6 @@
         <path>/etc/xdg/systemd</path>
     </exclude_path>
     <hash>
-       <algorithm>SHA256</algorithm>
+       <algorithm>libsodium</algorithm>
     </hash>
 </rules>

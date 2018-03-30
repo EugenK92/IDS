@@ -57,6 +57,7 @@ char* hash_libsodium(char* path) {
 
     int hash_size = 64;
     char* hex = (char*) malloc(sizeof(char) * (hash_size * 2 + 1));
+    strcpy(hex, "");
     if (sodium_init() < 0) {
         printf("Cannot use this. Because of reasons\n");
     }
@@ -75,10 +76,10 @@ char* hash_libsodium(char* path) {
                 crypto_generichash_update(&state,buf,read);
             }
             crypto_generichash_final(&state, out, hash_size);
-            
             for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
                 sprintf(hex + (i * 2), "%02x", out[i]);
             }
+            fclose(file);
         }
 
     }
@@ -161,6 +162,10 @@ char* calc_checksum (char* path) {
     }
     else if (strcmp(algorithm, "SHA512") == 0) {
         output = hash_sha512(path);
+    }
+    else {
+        printf("Algorithmus ist nicht bekannt. Nutze SHA256\n");
+        output = hash_sha256(path);
     }
     return output;
 }  
