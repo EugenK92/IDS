@@ -63,7 +63,10 @@ int main (int argc, char* argv[]) {
                 print_manual();
             }
             else if (check_parameter(argc, argv, "--show_exclude") != 0) {
-                parseDoc("rules.xml", "exclude_path", "path", 1);
+                char* paths = (char*) malloc(sizeof(char) * 1024);
+                strcpy(paths, "");  
+                parseDoc("rules.xml", "exclude_path", "path", paths, 1);
+                free(paths);
             }
             else {
                 print_manual();

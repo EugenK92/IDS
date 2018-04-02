@@ -18,4 +18,5 @@ void write_to_logfile(char* value, char* time, char* name) {
         fprintf(file, "%s %s\n", value, time);    
     }
     fclose(file);
+    free(filename);
 }

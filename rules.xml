@@ -9,6 +9,8 @@
         <path>/opt</path>
         <path>/dev</path>
         <path>/sys/kernel/debug/regmap</path>
+        <path>/proc</path>
+        <path>/.cache/chromium</path>
     </exclude_path>
     <hash>
        <algorithm>libsodium</algorithm>

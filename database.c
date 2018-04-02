@@ -81,7 +81,7 @@ char* select_all_data() {
     return result; 
 }
 
-char* select_checksum_by_path(char* path) {
+void select_checksum_by_path(char* path, char* result) {
     sqlite3 *db = connect();
     sqlite3_stmt *stmt;
     char *query = "SELECT checksum FROM filelist WHERE path = ?;";
@@ -89,7 +89,6 @@ char* select_checksum_by_path(char* path) {
     sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, path, -1, SQLITE_STATIC);
 
-    char* result = (char *) malloc(sizeof(char) * 65535);
     /* remove garbage */
     strcpy(result,"");
     char* temp = (char *) malloc(sizeof(char) * 512);
@@ -100,7 +99,7 @@ char* select_checksum_by_path(char* path) {
     }
     sqlite3_finalize(stmt);
     sqlite3_close_v2(db);
-    return result; 
+    free(temp);
 }
 
 /**
@@ -126,22 +125,21 @@ int check_data_by_path(char* path) {
     return rc;   
 }
 
-char* get_current_timestamp() {
+void get_current_timestamp(char* buffer) {
     time_t timer;
-    char* buffer = (char *) malloc(sizeof(char) * 21);
     struct tm* tm_info;
 
     time(&timer);
     tm_info = localtime(&timer);
     strftime(buffer, 21, "%Y-%m-%d %H:%M:%S", tm_info);
-    return buffer;
 }
 
 int update_data(int id, char * path, char* checksum) {
     sqlite3 *db = connect();
     sqlite3_stmt *stmt;
 
-    char* current_time = get_current_timestamp();
+    char* current_time = (char *) malloc(sizeof(char) * 21);
+    get_current_timestamp(current_time);
     char *query = "UPDATE filelist SET path = ?, checksum = ?, updated_at = ? WHERE id = ?";
     int rc = sqlite3_prepare_v2(db, query, -1, &stmt, 0);
     sqlite3_bind_text(stmt, 1, path, -1, SQLITE_STATIC);
@@ -151,7 +149,8 @@ int update_data(int id, char * path, char* checksum) {
     
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
-    sqlite3_close_v2(db); 
+    sqlite3_close_v2(db);
+    free(current_time);     
     return rc;
 }
 
@@ -159,7 +158,9 @@ int insert_data(char* path, char* checksum) {
     sqlite3 *db = connect();
     sqlite3_stmt *stmt;
 
-    char* current_time = get_current_timestamp();
+    char* current_time = (char *) malloc(sizeof(char) * 21);
+    get_current_timestamp(current_time);
+    printf("TIME: %s\n", current_time);
     char *query = "INSERT INTO filelist (path, checksum, created_at, updated_at) VALUES (?, ?, ?, ?);";
     int rc = sqlite3_prepare_v2(db, query, -1, &stmt, 0);
     sqlite3_bind_text(stmt, 1, path, -1, SQLITE_STATIC);
@@ -170,12 +171,23 @@ int insert_data(char* path, char* checksum) {
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt); 
     sqlite3_close_v2(db);
+    free(current_time);
     return rc;
 }
 
 int check_file_change(char* path, char* current_checksum) {
-    char* data = select_checksum_by_path(path);
-    return strcmp(current_checksum, data);
+    char* data = (char *) malloc(sizeof(char) * 65535);
+    select_checksum_by_path(path, data);
+    int res = strcmp(current_checksum, data);
+    free(data);
+    return res;
+}
+
+void send_to_log(char* value, char* filename) {
+    char* current_time = (char *) malloc(sizeof(char) * 21);
+    get_current_timestamp(current_time);
+    write_to_logfile(value, current_time, filename);
+    free(current_time);
 }
 
 int put_data(char* path, char* checksum, int modus, int update) {
@@ -188,9 +200,10 @@ int put_data(char* path, char* checksum, int modus, int update) {
         strcat(log_string, path);
         if (modus == 1 || modus == 3) {
             printf("New file was found: %s\n", path);
-            write_to_logfile(log_string, get_current_timestamp(), "log_newfile.txt");
+            send_to_log(log_string, "log_newfile.txt");
         }
-        write_to_logfile(log_string, get_current_timestamp(), "log.txt");
+        send_to_log(log_string, "log.txt");
+        free(log_string);
     }
     else {
         result = check_file_change(path, checksum);
@@ -201,9 +214,10 @@ int put_data(char* path, char* checksum, int modus, int update) {
             strcat(log_string, " was changed");
             if (modus == 1 || modus == 2) {
                 printf("File: %s was changed\n", path);
-                write_to_logfile(log_string, get_current_timestamp(), "log_changedfile.txt");            
+                send_to_log(log_string, "log_changedfile.txt");
             }           
-            write_to_logfile(log_string, get_current_timestamp(), "log.txt");            
+            send_to_log(log_string, "log.txt");
+            free(log_string);
         }
         if (update == 1) {
             update_data(data, path, checksum);

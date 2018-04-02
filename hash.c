@@ -45,7 +45,9 @@ int check_directory(const char* path) {
 
 int get_output_size() {
     int size = 0;
-    char* algorithm = parseDoc("rules.xml", "hash", "algorithm", 0);
+    char* algorithm = (char*) malloc(sizeof(char) * 1024);
+    strcpy(algorithm, "");  
+    parseDoc("rules.xml", "hash", "algorithm", algorithm, 0);
     memmove(algorithm, algorithm+1, strlen(algorithm));
     
     if (strcmp(algorithm, "libsodium") == 0) {
@@ -58,19 +60,18 @@ int get_output_size() {
         size = SHA512_DIGEST_LENGTH * 2 + 1;
     }    
 
+    free(algorithm);
     return size;
 }
 
 //Source: https://www.reddit.com/r/crypto/comments/7ooot2/using_libsodiums_generic_hash_to_hash_a_file/
-char* hash_libsodium(char* path) {
+void hash_libsodium(char* path, char* hex) {
 
-    int hash_size = 64;
-    char* hex = (char*) malloc(sizeof(char) * (hash_size * 2 + 1));
-    strcpy(hex, "");
     if (sodium_init() < 0) {
         printf("Cannot use this. Because of reasons\n");
     }
     else {
+        int hash_size = 64;        
         int buff_size = 255;
         crypto_generichash_state state;
         unsigned char buf[buff_size];
@@ -102,15 +103,11 @@ char* hash_libsodium(char* path) {
         }
 
     }
-
-    return hex;
 }
 
 // Source: https://stackoverflow.com/questions/7853156/calculate-and-print-sha256-hash-of-a-file-using-openssl
-char* hash_sha256(char* path) {
+void hash_sha256(char* path, char* output) {
     FILE* file = fopen(path, "rb");
-    char* output = (char*) malloc(sizeof(char) * (SHA256_DIGEST_LENGTH * 2 + 1));
-    strcpy(output, "");
     if (file) {
         const int bufSize = 65535;
         char* buffer = (char*) malloc(sizeof(char) * bufSize);
@@ -136,14 +133,10 @@ char* hash_sha256(char* path) {
         fclose(file);
         free(buffer);
     }
-
-    return output;
 }
 
-char* hash_sha512(char* path) {
+void hash_sha512(char* path, char* output) {
     FILE* file = fopen(path, "rb");
-    char* output = (char*) malloc(sizeof(char) * (SHA512_DIGEST_LENGTH * 2 + 1));
-    strcpy(output, "");
     if (file) {
         const int bufSize = 65535;
         char* buffer = (char*) malloc(sizeof(char) * bufSize);
@@ -168,29 +161,27 @@ char* hash_sha512(char* path) {
         fclose(file);
         free(buffer);
     }
-
-    return output;
 }
 
-char* calc_checksum (char* path) {
+void calc_checksum(char* path, char* output) {
 
-    char* algorithm = parseDoc("rules.xml", "hash", "algorithm", 0);
+    char* algorithm = (char*) malloc(sizeof(char) * 1024);
+    strcpy(algorithm, "");  
+    parseDoc("rules.xml", "hash", "algorithm", algorithm, 0);
     memmove(algorithm, algorithm+1, strlen(algorithm));
-    char* output = (char*) malloc(sizeof(char) * get_output_size());
-    strcpy(output, "");
     if (strcmp(algorithm, "libsodium") == 0) {
-        output = hash_libsodium(path);
+        hash_libsodium(path, output);
     }
     else if (strcmp(algorithm, "SHA256") == 0) {
-        output = hash_sha256(path);
+        hash_sha256(path, output);
     }
     else if (strcmp(algorithm, "SHA512") == 0) {
-        output = hash_sha512(path);
+        hash_sha512(path, output);
     }
     else {
         printf("Algorithmus ist nicht bekannt. Nutze SHA256\n");
-        output = hash_sha256(path);
+        hash_sha256(path, output);
     }
-    return output;
+    free(algorithm);
 }  
 

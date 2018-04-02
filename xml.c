@@ -28,13 +28,11 @@ void parseNode(xmlDocPtr doc, xmlNodePtr cur, char* subchild, char* paths, int s
     return;
 }
  
-char* parseDoc(char *docname, char *child, char *subchild, int show) {
+void parseDoc(char *docname, char *child, char *subchild, char* paths, int show) {
  
     xmlDocPtr doc;
     xmlNodePtr cur;
  
-    char* paths = (char*) malloc(sizeof(char) * 1024);
-    strcpy(paths, "");
     doc = xmlParseFile(docname);
  
     if (doc == NULL )
@@ -59,5 +57,4 @@ char* parseDoc(char *docname, char *child, char *subchild, int show) {
     }
  
     xmlFreeDoc(doc);
-    return paths;
 }

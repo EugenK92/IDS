@@ -41,22 +41,23 @@ void scan_dir(char* dir_name, int modus, int update) {
                 //Checking if directory
                 if (entry->d_type & DT_DIR) {
                     int path_length;
-                    char path[PATH_MAX];
+                    char dir_path[PATH_MAX];
                     path_length = strcmp(d_name, "") == 0 ? 
-                        snprintf (path, PATH_MAX, "%s", dir_name) :
-                        snprintf (path, PATH_MAX, "%s/%s", dir_name, d_name);
+                        snprintf (dir_path, PATH_MAX, "%s", dir_name) :
+                        snprintf (dir_path, PATH_MAX, "%s/%s", dir_name, d_name);
                     if (path_length >= PATH_MAX) {
                         fprintf (stderr, "Path length has got too long.\n");
                         exit (EXIT_FAILURE);
                     }
                     if (modus == 1) {
-                        printf("Checking directory: %s\n", path);
+                        printf("Checking directory: %s\n", dir_path);
                     }
-                    scan_dir(path, modus, update);
+                    scan_dir(dir_path, modus, update);
                 }
                 else if (entry->d_type & DT_REG) {
                     int output_size = get_output_size();
                     char* output = (char*) malloc(sizeof(char) * output_size);
+                    strcpy(output, "");
                     char* path = (char*) malloc(sizeof(char) * PATH_MAX);
                     strcpy(path,"");
                     strcat(path, dir_name);
@@ -65,11 +66,13 @@ void scan_dir(char* dir_name, int modus, int update) {
                     if (modus == 1) {
                         printf("Checking file: %s\n", path);
                     }
-                    output = calc_checksum(path);
+                    calc_checksum(path, output);
                     if (modus == 1) {
                         printf("Checksum: %s\n", output);
                     }
                     put_data(path, output, modus, update);
+                    free(output);
+                    free(path);
                 }  
             }
         }
@@ -85,7 +88,9 @@ void scan_dir(char* dir_name, int modus, int update) {
 
 //Split String Source: https://stackoverflow.com/a/11198630
 int check_if_allowed_path(char* path) {
-    char* paths = parseDoc("rules.xml", "exclude_path", "path", 0);
+    char* paths = (char*) malloc(sizeof(char) * 1024);
+    strcpy(paths, "");
+    parseDoc("rules.xml", "exclude_path", "path", paths, 0);
     char ** res  = NULL;
     char *  p    = strtok (paths, ";");
     int n_spaces = 0;
@@ -112,6 +117,6 @@ int check_if_allowed_path(char* path) {
     }
 
     free (res);   
-
+    free(paths);
     return end;
 }  

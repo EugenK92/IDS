@@ -5,6 +5,6 @@
 #include <libxml/parser.h>
 
 void parseNode (xmlDocPtr, xmlNodePtr, char*, char*, int);
-char* parseDoc(char*, char*, char*, int);
+void parseDoc(char*, char*, char*,  char*, int);
 
 #endif /* XML_H */
