@@ -10,7 +10,8 @@
         <path>/dev</path>
         <path>/sys/kernel/debug/regmap</path>
         <path>/proc</path>
-        <path>/.cache/chromium</path>
+        <path>/.cache</path>
+        <path>/usr/src/linux-headers-4.4.0-112-generic</path>
     </exclude_path>
     <hash>
        <algorithm>libsodium</algorithm>

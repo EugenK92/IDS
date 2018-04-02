@@ -160,7 +160,6 @@ int insert_data(char* path, char* checksum) {
 
     char* current_time = (char *) malloc(sizeof(char) * 21);
     get_current_timestamp(current_time);
-    printf("TIME: %s\n", current_time);
     char *query = "INSERT INTO filelist (path, checksum, created_at, updated_at) VALUES (?, ?, ?, ?);";
     int rc = sqlite3_prepare_v2(db, query, -1, &stmt, 0);
     sqlite3_bind_text(stmt, 1, path, -1, SQLITE_STATIC);
