@@ -1,18 +1,18 @@
 # IDS
-sudo apt-get install libsqlite3-dev
+        sudo apt-get install libsqlite3-dev
 
-sudo apt-get install libxml2 libxml2-dev
+        sudo apt-get install libxml2 libxml2-dev
 
 
 Im Ordner libsodium-stable:
 
-./configure
+        ./configure
 
-make && make check
+        make && make check
 
-sudo make install
+        sudo make install
 
-sudo ln -s /usr/local/lib/libsodium.so.23 /usr/lib/libsodium.so.23
+        sudo ln -s /usr/local/lib/libsodium.so.23 /usr/lib/libsodium.so.23
 
 Aufruf: ./IDS [OPTION]... [PFAD]...
 
