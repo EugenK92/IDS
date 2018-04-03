@@ -3,3 +3,4 @@ IDS
 sqlite/ids.db
 sqlite/ids.db-journal
 log/
+!log/.gitkeep
